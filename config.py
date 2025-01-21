@@ -21,10 +21,6 @@ class DataBase:
     Конфигурации работы с базой данных.
     '''
     
-    def __init__(self) -> None:
-        '''
-        Конфигурации работы с базой данных.
-        '''
+    _fileName: str = "data.db"
+    filePath: str = f"../{_fileName}"
         
-        self._fileName: str = "data.db"
-        self.filePath: str = f"../{self._fileName}"
