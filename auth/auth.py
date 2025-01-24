@@ -19,12 +19,14 @@ def auth():
     Непосредственно произвести авторизацию.
     '''
     
-    data = request.json
+    data = request.data
+    print(request.json)
+    
     if not data:
         return jsonify({"error": "No data provided"}), 400
     
-    login: str = data['login']
-    password: str = data['password']
+    login: str = data.get('login')
+    password: str = data.get('password')
     
     
     return "Success"
