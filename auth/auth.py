@@ -1,36 +1,26 @@
-'''
+from flask import Blueprint, request, jsonify
+from database.main import get_db
+from database.models import User
+from sqlalchemy.orm import Session
 
-'''
+auth_blueprint = Blueprint('auth', __name__)
 
-from flask import Flask, jsonify, request
-
-app = Flask(__name__)
-
-@app.route('/auth', methods=['GET'])
-def check():
-    """
-    Обрабатывает GET запрос и возвращает состояние сервера
-    """
-    return "Сервис работает стабильно", 200
-
-@app.route('/auth', methods=['POST'])
-def auth():
-    '''
-    Непосредственно произвести авторизацию.
-    '''
+@auth_blueprint.route('/auth', methods=['POST'])
+def authenticate():
+    data = request.get_json()
+    if not data or 'login' not in data or 'password' not in data:
+        return jsonify({"error": "Login and password required"}), 400
     
-    data = request.data
-    print(request.json)
+    db: Session = next(get_db())
+    user = db.query(User).filter(User.login == data['login']).first()
     
-    if not data:
-        return jsonify({"error": "No data provided"}), 400
+    if not user or user.password != data['password']:  # В реальном проекте сравнивать хеши!
+        return jsonify({"authenticated": False}), 401
     
-    login: str = data.get('login')
-    password: str = data.get('password')
-    
-    
-    return "Success"
-
-if __name__ == "__main__":
-    app.run(debug=True)
-    
+    return jsonify({
+        "authenticated": True,
+        "user": {
+            "login": user.login,
+            "email": user.email
+        }
+    }), 200
