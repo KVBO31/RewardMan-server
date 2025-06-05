@@ -1,9 +1,11 @@
 from flask import Flask
+from flask_cors import CORS
 from auth.auth import auth_blueprint
 from auth.reg import reg_blueprint
 from database.main import init_db
 
 app = Flask(__name__)
+CORS(app)
 
 # Инициализация БД
 init_db()
